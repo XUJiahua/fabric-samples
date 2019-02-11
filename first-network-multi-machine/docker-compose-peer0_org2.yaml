@@ -20,8 +20,6 @@ services:
       service: peer0.org2.example.com
     extra_hosts:
       - "orderer.example.com:172.16.3.16"
-      - "peer0.org1.example.com:172.16.3.24"
-      - "peer0.org2.example.com:172.16.3.28"
     networks:
       - byfn
 
