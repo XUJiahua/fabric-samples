@@ -19,6 +19,14 @@ Fabric网络，目前申请有3台机器，每台用途如下：
 
 下载本git目录下的文件。
 
+```
+cd /opt
+wget https://github.com/XUJiahua/fabric-samples/archive/develop.zip
+unzip develop.zip
+```
+
+
+
 note: 当前本地路径 /opt/fabric-samples-develop/first-network-multi-machine
 
 `./byfn.sh generate` 生成必要的文件
@@ -42,7 +50,7 @@ note: 当前本地路径 /opt/fabric-samples-develop/first-network-multi-machine
 
 #### peer0.org1.example.com
 
-mkdir -p /opt/fabric-samples-develop/first-network-multi-machine
+`mkdir -p /opt/fabric-samples-develop/first-network-multi-machine`
 
 启动peer节点
 
@@ -50,7 +58,7 @@ mkdir -p /opt/fabric-samples-develop/first-network-multi-machine
 
 #### peer0.org2.example.com
 
-mkdir -p /opt/fabric-samples-develop/first-network-multi-machine
+`mkdir -p /opt/fabric-samples-develop/first-network-multi-machine`
 
 启动peer节点
 
