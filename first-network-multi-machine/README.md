@@ -25,9 +25,13 @@ wget https://github.com/XUJiahua/fabric-samples/archive/develop.zip
 unzip develop.zip
 ```
 
-note: 当前本地路径 /opt/fabric-samples-develop/first-network-multi-machine
+生成必要的文件
 
-`./byfn.sh generate` 生成必要的文件
+```
+cd /opt/fabric-samples-develop/first-network-multi-machine
+
+./byfn.sh generate 
+```
 
 1. crypto-config: 生成出来的证书
 1. channel-artifacts: 生成出来的创始区块
@@ -69,17 +73,16 @@ docker exec -it cli bash
 ### 清理
 
 ```
-docker-compose -f docker-compose-orderer.yaml down
-docker-compose -f docker-compose-peer0_org1.yaml down
-docker-compose -f docker-compose-peer0_org2.yaml down
-
 docker rm -f $(docker ps -aq)
+docker volume prune
 
 rm /opt/develop.zip
 rm -rf /opt/fabric-samples-develop
-
 ```
 
+注意 `docker volume prune` 非常重要。volume会复用，导致之前生成的证书也被复用了，这个坑对docker不熟悉很容易踩。
+ 
+参考这个回答中的高票评论。https://stackoverflow.com/questions/45726536/peer-channel-creation-fails-in-hyperledger-fabric/45761571#45761571
 
 ### 日志
 
