@@ -25,8 +25,6 @@ wget https://github.com/XUJiahua/fabric-samples/archive/develop.zip
 unzip develop.zip
 ```
 
-
-
 note: 当前本地路径 /opt/fabric-samples-develop/first-network-multi-machine
 
 `./byfn.sh generate` 生成必要的文件
@@ -34,32 +32,59 @@ note: 当前本地路径 /opt/fabric-samples-develop/first-network-multi-machine
 1. crypto-config: 生成出来的证书
 1. channel-artifacts: 生成出来的创始区块
 
+同步文件至peer节点（note：配置免密登录）
+
+```
+scp -r /opt/fabric-samples-develop/ webapp@peer0.org1.example.com:/opt/fabric-samples-develop
+scp -r /opt/fabric-samples-develop/ webapp@peer0.org2.example.com:/opt/fabric-samples-develop
+```
+
 启动orderer节点
 
 `docker-compose -f docker-compose-orderer.yaml up -d`
 
-同步文件至peer节点
-
-`scp -r . webapp@peer0.org1.example.com:/opt/fabric-samples-develop/first-network-multi-machine`
-
-`scp -r . webapp@peer0.org2.example.com:/opt/fabric-samples-develop/first-network-multi-machine`
-
-（note：配置免密登录）
 
 把当前路径的文件内容同步到peer节点。
 
 #### peer0.org1.example.com
 
-`mkdir -p /opt/fabric-samples-develop/first-network-multi-machine`
-
 启动peer节点
 
 `docker-compose -f docker-compose-peer0_org1.yaml up -d`
 
-#### peer0.org2.example.com
+跑脚本
 
-`mkdir -p /opt/fabric-samples-develop/first-network-multi-machine`
+```
+docker exec -it cli bash
+./scripts/script.sh mychannel
+```
+
+#### peer0.org2.example.com
 
 启动peer节点
 
 `docker-compose -f docker-compose-peer0_org2.yaml up -d`
+
+
+### 清理
+
+```
+docker-compose -f docker-compose-orderer.yaml down
+docker-compose -f docker-compose-peer0_org1.yaml down
+docker-compose -f docker-compose-peer0_org2.yaml down
+
+docker rm -f $(docker ps -aq)
+
+rm /opt/develop.zip
+rm -rf /opt/fabric-samples-develop
+
+```
+
+
+### 日志
+
+```
+docker-compose -f docker-compose-orderer.yaml logs
+docker-compose -f docker-compose-peer0_org1.yaml logs
+docker-compose -f docker-compose-peer0_org2.yaml logs
+```
