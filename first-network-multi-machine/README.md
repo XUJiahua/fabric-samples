@@ -13,7 +13,13 @@ Fabric网络，目前申请有3台机器，每台用途如下：
 1. 172.16.3.24 peer0.org1.example.com
 1. 172.16.3.28 peer0.org2.example.com
 
-### 部署
+
+#### 最后
+
+![Alt text](img/WX20190212-175559.png)
+
+
+### 部署流程
 
 #### orderer.example.com
 
@@ -91,3 +97,8 @@ docker-compose -f docker-compose-orderer.yaml logs
 docker-compose -f docker-compose-peer0_org1.yaml logs
 docker-compose -f docker-compose-peer0_org2.yaml logs
 ```
+
+
+## 参考
+
+1. Fabric 1.0的多机部署 http://www.cnblogs.com/studyzy/p/7237287.html
