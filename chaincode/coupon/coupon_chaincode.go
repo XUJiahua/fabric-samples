@@ -4,6 +4,21 @@
 
 // ====CHAINCODE EXECUTION SAMPLES (CLI) ==================
 
+// assumption
+// channel: myc
+// chaincode id: mycc
+
+// terminal 1
+// cd chaincode-docker-devmode && docker-compose -f docker-compose-simple.yaml up
+
+// terminal 2
+// CORE_PEER_ADDRESS=peer:7052 CORE_CHAINCODE_ID_NAME=mycc:0 ./coupon
+
+// terminal 3
+// docker exec -it cli bash
+// peer chaincode install -p chaincodedev/chaincode/coupon -n mycc -v 0
+// peer chaincode instantiate -n mycc -v 0 -c '{"Args":[]}' -C myc
+
 // ==== Invoke coupons ====
 // peer chaincode invoke -C myc -n mycc -c '{"Args":["initCoupon","0001","john","gloud $300","for john"]}'
 // peer chaincode invoke -C myc -n mycc -c '{"Args":["initCoupon","0002","tom","free lunch","for tom"]}'
@@ -14,8 +29,12 @@
 
 // ==== Query coupons ====
 // peer chaincode query -C myc -n mycc -c '{"Args":["readCoupon","0001"]}'
-// peer chaincode query -C myc -n mycc -c '{"Args":["getCouponsByRange","0001","0003"]}'
+// peer chaincode query -C myc -n mycc -c '{"Args":["getCouponsByRange","0001","0004"]}'
 // peer chaincode query -C myc -n mycc -c '{"Args":["getHistoryForCoupon","0001"]}'
+//
+
+// ===== reference =====
+// https://hyperledger-fabric.readthedocs.io/en/latest/chaincode4ade.html
 
 package main
 
