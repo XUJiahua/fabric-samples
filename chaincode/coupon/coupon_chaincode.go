@@ -30,6 +30,7 @@
 // ==== Query coupons ====
 // peer chaincode query -C myc -n mycc -c '{"Args":["readCoupon","0001"]}'
 // peer chaincode query -C myc -n mycc -c '{"Args":["getCouponsByRange","0001","0004"]}'
+// peer chaincode query -C myc -n mycc -c '{"Args":["getCouponsOfOwner","jerry"]}'
 // peer chaincode query -C myc -n mycc -c '{"Args":["getHistoryForCoupon","0001"]}'
 //
 
@@ -102,7 +103,7 @@ func (t *CouponChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.getHistoryForCoupon(stub, args)
 	} else if function == "getCouponsByRange" { //get coupons based on range query
 		return t.getCouponsByRange(stub, args)
-	} else if function == "getCouponsByOwner" { //get all coupons of a user
+	} else if function == "getCouponsOfOwner" { //get all coupons of a user
 		return t.getCouponsOfOwner(stub, args)
 	}
 
@@ -168,14 +169,17 @@ func (t *CouponChaincode) initCoupon(stub shim.ChaincodeStubInterface, args []st
 	//  The key is a composite key, with the elements that you want to range query on listed first.
 	//  In our case, the composite key is based on indexName~owner~name.
 	//  This will enable very efficient state range queries based on composite keys matching indexName~owner~*
-	colorNameIndexKey, err := stub.CreateCompositeKey(compositeKeyIndexName, []string{coupon.Owner, coupon.Code})
+	ownerCodeIndexKey, err := stub.CreateCompositeKey(compositeKeyIndexName, []string{coupon.Owner, coupon.Code})
 	if err != nil {
 		return shim.Error(err.Error())
 	}
 	//  Save index entry to state. Only the key name is needed, no need to store a duplicate copy of the coupon.
 	//  Note - passing a 'nil' value will effectively delete the key from state, therefore we pass null character as value
 	value := []byte{0x00}
-	stub.PutState(colorNameIndexKey, value)
+	err = stub.PutState(ownerCodeIndexKey, value)
+	if err != nil {
+		return shim.Error("Failed to put state:" + err.Error())
+	}
 
 	// ==== Coupon saved and indexed. Return success ====
 	fmt.Println("- end init coupon")
@@ -186,20 +190,20 @@ func (t *CouponChaincode) initCoupon(stub shim.ChaincodeStubInterface, args []st
 // readCoupon - read a coupon from chaincode state
 // ===============================================
 func (t *CouponChaincode) readCoupon(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	var name, jsonResp string
+	var code, jsonResp string
 	var err error
 
 	if len(args) != 1 {
-		return shim.Error("Incorrect number of arguments. Expecting name of the coupon to query")
+		return shim.Error("Incorrect number of arguments. Expecting code of the coupon to query")
 	}
 
-	name = args[0]
-	valAsbytes, err := stub.GetState(name) //get the coupon from chaincode state
+	code = args[0]
+	valAsbytes, err := stub.GetState(code) //get the coupon from chaincode state
 	if err != nil {
-		jsonResp = "{\"Error\":\"Failed to get state for " + name + "\"}"
+		jsonResp = "{\"Error\":\"Failed to get state for " + code + "\"}"
 		return shim.Error(jsonResp)
 	} else if valAsbytes == nil {
-		jsonResp = "{\"Error\":\"coupon does not exist: " + name + "\"}"
+		jsonResp = "{\"Error\":\"coupon does not exist: " + code + "\"}"
 		return shim.Error(jsonResp)
 	}
 
@@ -217,7 +221,7 @@ func (t *CouponChaincode) delete(stub shim.ChaincodeStubInterface, args []string
 	}
 	code := args[0]
 
-	// to maintain the color~name index, we need to read the coupon first and get its color
+	// to maintain the owner~code index, we need to read the coupon first and get its color
 	valAsbytes, err := stub.GetState(code) //get the coupon from chaincode state
 	if err != nil {
 		jsonResp = "{\"Error\":\"Failed to get state for " + code + "\"}"
@@ -239,13 +243,13 @@ func (t *CouponChaincode) delete(stub shim.ChaincodeStubInterface, args []string
 	}
 
 	// maintain the index
-	colorNameIndexKey, err := stub.CreateCompositeKey(compositeKeyIndexName, []string{couponJSON.Owner, couponJSON.Code})
+	ownerCodeIndexKey, err := stub.CreateCompositeKey(compositeKeyIndexName, []string{couponJSON.Owner, couponJSON.Code})
 	if err != nil {
 		return shim.Error(err.Error())
 	}
 
 	//  Delete index entry to state.
-	err = stub.DelState(colorNameIndexKey)
+	err = stub.DelState(ownerCodeIndexKey)
 	if err != nil {
 		return shim.Error("Failed to delete state:" + err.Error())
 	}
@@ -256,7 +260,6 @@ func (t *CouponChaincode) delete(stub shim.ChaincodeStubInterface, args []string
 // transfer a coupon by setting a new owner name on the coupon
 // ===========================================================
 func (t *CouponChaincode) transferCoupon(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-
 	//   0       1
 	// "name", "bob"
 	if len(args) < 2 {
@@ -279,12 +282,36 @@ func (t *CouponChaincode) transferCoupon(stub shim.ChaincodeStubInterface, args 
 	if err != nil {
 		return shim.Error(err.Error())
 	}
+	oldOwner := couponToTransfer.Owner
 	couponToTransfer.Owner = newOwner //change the owner
 
 	couponJSONasBytes, _ := json.Marshal(couponToTransfer)
 	err = stub.PutState(code, couponJSONasBytes) //rewrite the coupon
 	if err != nil {
 		return shim.Error(err.Error())
+	}
+
+	// maintain the composite index
+	ownerCodeIndexKey, err := stub.CreateCompositeKey(compositeKeyIndexName, []string{oldOwner, code})
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	//  Delete index entry to state.
+	err = stub.DelState(ownerCodeIndexKey)
+	if err != nil {
+		return shim.Error("Failed to delete state:" + err.Error())
+	}
+
+	// Add new composite index entry
+	ownerCodeIndexKey, err = stub.CreateCompositeKey(compositeKeyIndexName, []string{newOwner, code})
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	value := []byte{0x00}
+	err = stub.PutState(ownerCodeIndexKey, value)
+	if err != nil {
+		return shim.Error("Failed to put state:" + err.Error())
 	}
 
 	fmt.Println("- end transferCoupon (success)")
@@ -338,7 +365,6 @@ func constructQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorI
 // Therefore, range queries are a safe option for performing update transactions based on query results.
 // ===========================================================================================
 func (t *CouponChaincode) getCouponsByRange(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-
 	if len(args) < 2 {
 		return shim.Error("Incorrect number of arguments. Expecting 2")
 	}
@@ -371,7 +397,6 @@ func (t *CouponChaincode) getCouponsByRange(stub shim.ChaincodeStubInterface, ar
 // Therefore, range queries are a safe option for performing update transactions based on query results.
 // ===========================================================================================
 func (t *CouponChaincode) transferCouponsBasedOnOwner(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-
 	//   0       1
 	// "owner", "bob"
 	if len(args) < 2 {
@@ -455,15 +480,14 @@ func (t *CouponChaincode) getCouponsOfOwner(stub shim.ChaincodeStubInterface, ar
 	bArrayMemberAlreadyWritten := false
 
 	// Iterate through result set and for each coupon found, transfer to newOwner
-	var i int
-	for i = 0; usersCouponResultsIterator.HasNext(); i++ {
+	for usersCouponResultsIterator.HasNext() {
 		// Note that we don't get the value (2nd return variable), we'll just get the coupon name from the composite key
 		responseRange, err := usersCouponResultsIterator.Next()
 		if err != nil {
 			return shim.Error(err.Error())
 		}
 
-		// get the owner and name from owner~name composite key
+		// get the owner and name from owner~code composite key
 		objectType, compositeKeyParts, err := stub.SplitCompositeKey(responseRange.Key)
 		if err != nil {
 			return shim.Error(err.Error())
