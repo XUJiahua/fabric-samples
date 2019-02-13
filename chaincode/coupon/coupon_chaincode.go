@@ -12,6 +12,8 @@
 // cd chaincode-docker-devmode && docker-compose -f docker-compose-simple.yaml up
 
 // terminal 2
+// docker exec -it chaincode bash
+// cd coupon && go build
 // CORE_PEER_ADDRESS=peer:7052 CORE_CHAINCODE_ID_NAME=mycc:0 ./coupon
 
 // terminal 3
