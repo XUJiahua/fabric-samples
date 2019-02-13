@@ -102,6 +102,8 @@ func (t *CouponChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.getHistoryForCoupon(stub, args)
 	} else if function == "getCouponsByRange" { //get coupons based on range query
 		return t.getCouponsByRange(stub, args)
+	} else if function == "getCouponsByOwner" { //get all coupons of a user
+		return t.getCouponsOfOwner(stub, args)
 	}
 
 	fmt.Println("invoke did not find func: " + function) //error
@@ -418,6 +420,89 @@ func (t *CouponChaincode) transferCouponsBasedOnOwner(stub shim.ChaincodeStubInt
 	responsePayload := fmt.Sprintf("Transferred %d %s coupons to %s", i, owner, newOwner)
 	fmt.Println("- end transferCouponsBasedOnOwner: " + responsePayload)
 	return shim.Success([]byte(responsePayload))
+}
+
+// ==== Example: GetStateByPartialCompositeKey/RangeQuery =========================================
+// getCouponsOfOwner will get coupons of a user.
+// Uses a GetStateByPartialCompositeKey (range query) against color~name 'index'.
+// Committing peers will re-execute range queries to guarantee that result sets are stable
+// between endorsement time and commit time. The transaction is invalidated by the
+// committing peers if the result set has changed between endorsement time and commit time.
+// Therefore, range queries are a safe option for performing update transactions based on query results.
+// ===========================================================================================
+func (t *CouponChaincode) getCouponsOfOwner(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0
+	// "john"
+	if len(args) < 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 2")
+	}
+
+	owner := args[0]
+	fmt.Println("- start getCouponsOfOwner ", owner)
+
+	// Query the owner~name index by owner
+	// This will execute a key range query on all keys starting with 'owner'
+	usersCouponResultsIterator, err := stub.GetStateByPartialCompositeKey(compositeKeyIndexName, []string{owner})
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	defer usersCouponResultsIterator.Close()
+
+	// buffer is a JSON array containing QueryResults
+	var buffer bytes.Buffer
+	buffer.WriteString("[")
+
+	bArrayMemberAlreadyWritten := false
+
+	// Iterate through result set and for each coupon found, transfer to newOwner
+	var i int
+	for i = 0; usersCouponResultsIterator.HasNext(); i++ {
+		// Note that we don't get the value (2nd return variable), we'll just get the coupon name from the composite key
+		responseRange, err := usersCouponResultsIterator.Next()
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+
+		// get the owner and name from owner~name composite key
+		objectType, compositeKeyParts, err := stub.SplitCompositeKey(responseRange.Key)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		returnedOwner := compositeKeyParts[0]
+		returnedCode := compositeKeyParts[1]
+
+		fmt.Printf("- found a coupon from index:%s owner:%s name:%s\n", objectType, returnedOwner, returnedCode)
+
+		valAsbytes, err := stub.GetState(returnedCode) //get the coupon from chaincode state
+		var jsonResp string
+		if err != nil {
+			jsonResp = "{\"Error\":\"Failed to get state for " + returnedCode + "\"}"
+			return shim.Error(jsonResp)
+		} else if valAsbytes == nil {
+			jsonResp = "{\"Error\":\"coupon does not exist: " + returnedCode + "\"}"
+			return shim.Error(jsonResp)
+		}
+
+		// Add a comma before array members, suppress it for the first array member
+		if bArrayMemberAlreadyWritten == true {
+			buffer.WriteString(",")
+		}
+		buffer.WriteString("{\"Key\":")
+		buffer.WriteString("\"")
+		buffer.WriteString(returnedCode)
+		buffer.WriteString("\"")
+
+		buffer.WriteString(", \"Record\":")
+		// Record is a JSON object, so we write as-is
+		buffer.WriteString(string(valAsbytes))
+		buffer.WriteString("}")
+		bArrayMemberAlreadyWritten = true
+	}
+	buffer.WriteString("]")
+
+	fmt.Printf("- getCouponsOfOwner queryResult:\n%s\n", buffer.String())
+
+	return shim.Success(buffer.Bytes())
 }
 
 func (t *CouponChaincode) getHistoryForCoupon(stub shim.ChaincodeStubInterface, args []string) pb.Response {
