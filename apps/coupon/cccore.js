@@ -45,17 +45,20 @@ async function callChainCode(isReadOnly, ...args) {
     const contract = await network.getContract(chainCodeName);
 
     if (isReadOnly) {
-      // read only
+      console.log("Read from ledger");
       const response = await contract.evaluateTransaction(...args);
       console.log(response.toString());
+      return response.toString();
     } else {
-      // write to ledger
+      console.log("Write to ledger");
       const response = await contract.submitTransaction(...args);
       console.log(response.toString());
+      return response.toString();
     }
   } catch (error) {
     console.log(`Error processing transaction. ${error}`);
     console.log(error.stack);
+    return "";
   } finally {
     // Disconnect from the gateway
     console.log("Disconnect from Fabric gateway.");
