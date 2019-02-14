@@ -1,7 +1,7 @@
 const path = require("path");
 
 // fabric network definition folder, TO modify accordingly
-const fixtures = path.resolve(__dirname, "../../basic-network");
+const fixtures = path.resolve(__dirname, "../../first-network-2p1o");
 // Identity to credentials to be stored in the wallet
 const credPath = path.join(
   fixtures,
@@ -16,7 +16,7 @@ const certPath = path.join(
 const keyPath = path.join(
   credPath,
   // TO modify accordingly
-  "/msp/keystore/c75bd6911aca808941c3557ee7c97e90f3952e379497dc55eb903f31b50abc83_sk"
+  "/msp/keystore/89a6b1a7d54f676b99f27c3ad228b5acf59c76ebf43aa0484d2623dc6efbd4b4_sk"
 );
 
 // wallet path, TO modify accordingly
@@ -28,8 +28,16 @@ const identityLabel = "User1@org1.example.com";
 const mspId = "Org1MSP";
 
 // TO modify accordingly
-const channelId = "";
+const channelName = "mychannel";
 // TO modify accordingly
-const contractName = "";
+const chainCodeName = "mycc";
 
-module.exports = { identityLabel, mspId, certPath, keyPath, walletPath };
+module.exports = {
+  identityLabel,
+  mspId,
+  certPath,
+  keyPath,
+  walletPath,
+  channelName,
+  chainCodeName
+};
