@@ -1,0 +1,16 @@
+{
+  "name": "coupon",
+  "version": "1.0.0",
+  "description": "application over smart contract",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "create-wallet": "node addToWallet.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "john.xu",
+  "license": "ISC",
+  "dependencies": {
+    "fabric-network": "^1.4.0"
+  }
+}
