@@ -30,7 +30,7 @@ const mspId = "Org1MSP";
 // TO modify accordingly
 const channelName = "mychannel";
 // TO modify accordingly
-const chainCodeName = "mycc";
+const chainCodeName = "coupon";
 
 module.exports = {
   identityLabel,

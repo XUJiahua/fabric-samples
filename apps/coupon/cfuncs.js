@@ -51,3 +51,14 @@ async function getHistoryForCoupon(code) {
     const res = await callChainCode(true, "getHistoryForCoupon", code)
     console.log(res)
 }
+
+module.exports = {
+    add,
+    transferCoupon,
+    transferCouponsBasedOnOwner,
+    remove,
+    get,
+    getCouponsByRange,
+    getCouponsOfOwner,
+    getHistoryForCoupon
+};
