@@ -1,12 +1,12 @@
-import { Component, OnInit, Input } from "@angular/core";
-import { Location } from "@angular/common";
-import { CouponService } from "../coupon.service";
+import { Component, OnInit, Input } from '@angular/core';
+import { Location } from '@angular/common';
+import { CouponService } from '../coupon.service';
 
-import { Coupon } from "../coupon";
+import { Coupon } from '../coupon';
 @Component({
-  selector: "app-coupon-new",
-  templateUrl: "./coupon-new.component.html",
-  styleUrls: ["./coupon-new.component.css"]
+  selector: 'app-coupon-new',
+  templateUrl: './coupon-new.component.html',
+  styleUrls: ['./coupon-new.component.css']
 })
 export class CouponNewComponent implements OnInit {
   @Input() coupon: Coupon;

@@ -1,13 +1,13 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit } from '@angular/core';
 
-import { Router } from "@angular/router";
-import { Coupon } from "../coupon";
-import { CouponService } from "../coupon.service";
+import { Router } from '@angular/router';
+import { Coupon } from '../coupon';
+import { CouponService } from '../coupon.service';
 
 @Component({
-  selector: "app-coupons",
-  templateUrl: "./coupons.component.html",
-  styleUrls: ["./coupons.component.css"]
+  selector: 'app-coupons',
+  templateUrl: './coupons.component.html',
+  styleUrls: ['./coupons.component.css']
 })
 export class CouponsComponent implements OnInit {
   coupons: Coupon[];
@@ -20,7 +20,7 @@ export class CouponsComponent implements OnInit {
 
   getCoupons() {
     this.couponService
-      .getCoupons("0001", "9999")
+      .getCoupons('0001', '9999')
       .subscribe(coupons => (this.coupons = coupons));
   }
 
@@ -30,7 +30,7 @@ export class CouponsComponent implements OnInit {
 
   onRowSelect(event) {
     console.log(event.data);
-    this.router.navigate(["/coupon/" + event.data.code]);
+    this.router.navigate(['/coupon/' + event.data.code]);
   }
 
   onRowUnselect(event) {

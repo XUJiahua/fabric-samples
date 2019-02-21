@@ -26,6 +26,7 @@
         <button
           pButton
           type="button"
+          (click)="showTransferDialog()"
           style="margin-right: .25em"
           class="ui-button-info"
           label="Transfer"
@@ -59,7 +60,7 @@
   </p-card>
 </div>
 <p-dialog
-  header=""
+  header="Delete"
   [(visible)]="display"
   [modal]="true"
   [responsive]="true"
@@ -75,6 +76,40 @@
       pButton
       icon="pi pi-check"
       (click)="onDelete()"
+      label="Yes"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-close"
+      (click)="display = false"
+      label="No"
+      class="ui-button-secondary"
+    ></button>
+  </p-footer>
+</p-dialog>
+
+<p-dialog
+  header="Transfer"
+  [(visible)]="display2"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '350px', minWidth: '200px' }"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+  <div class="ui-g-4"><label for="user">to User</label></div>
+  <div class="ui-g-8">
+    <input pInputText id="user" [(ngModel)]="user" />
+  </div>
+
+  <p-footer>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      (click)="onTransfer()"
       label="Yes"
     ></button>
     <button
