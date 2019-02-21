@@ -20,3 +20,8 @@ profile的说明可见：https://hyperledger-fabric.readthedocs.io/en/latest/dev
 
 3、 封装chaincode的操作，比如封装成API，给终端用户使用。
 
+
+```
+npm install
+npm start
+```
