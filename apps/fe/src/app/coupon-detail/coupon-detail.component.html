@@ -1,0 +1,89 @@
+<div *ngIf="coupon">
+  <p-card header="coupon {{ coupon.code }}" [style]="{ width: '360px' }">
+    <div class="ui-g ui-fluid">
+      <div class="ui-g-4"><label for="code">Code</label></div>
+      <div class="ui-g-8">
+        <input pInputText id="code" [(ngModel)]="coupon.code" />
+      </div>
+
+      <div class="ui-g-4"><label for="owner">Owner</label></div>
+      <div class="ui-g-8">
+        <input pInputText id="owner" [(ngModel)]="coupon.owner" />
+      </div>
+
+      <div class="ui-g-4"><label for="name">Name</label></div>
+      <div class="ui-g-8">
+        <input pInputText id="name" [(ngModel)]="coupon.name" />
+      </div>
+
+      <div class="ui-g-4"><label for="note">Note</label></div>
+      <div class="ui-g-8">
+        <input pInputText id="note" [(ngModel)]="coupon.note" />
+      </div>
+    </div>
+    <p-footer>
+      <div class="ui-dialog-buttonpane ui-helper-clearfix">
+        <button
+          pButton
+          type="button"
+          style="margin-right: .25em"
+          class="ui-button-info"
+          label="Transfer"
+        ></button>
+        <button
+          pButton
+          type="button"
+          style="margin-right: .25em"
+          class="ui-button-info"
+          label="History"
+        ></button>
+        <button
+          pButton
+          type="button"
+          (click)="showDeleteDialog()"
+          style="margin-right: .25em"
+          class="ui-button-danger"
+          label="Delete"
+        ></button>
+        <button
+          pButton
+          type="button"
+          (click)="goBack()"
+          style="margin-right:
+        .25em"
+          class="ui-button-info"
+          label="Back"
+        ></button>
+      </div>
+    </p-footer>
+  </p-card>
+</div>
+<p-dialog
+  header=""
+  [(visible)]="display"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '350px', minWidth: '200px' }"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+  <span>Confirm?</span>
+  <p-footer>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      (click)="onDelete()"
+      label="Yes"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-close"
+      (click)="display = false"
+      label="No"
+      class="ui-button-secondary"
+    ></button>
+  </p-footer>
+</p-dialog>

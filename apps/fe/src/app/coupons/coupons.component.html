@@ -1,0 +1,30 @@
+<p-table
+  [value]="coupons"
+  [paginator]="true"
+  [rows]="10"
+  selectionMode="single"
+  [(selection)]="selectedCoupon"
+  dataKey="code"
+  (onRowSelect)="onRowSelect($event)"
+  (onRowUnselect)="onRowUnselect($event)"
+>
+  <ng-template pTemplate="caption">
+    List of Coupons
+  </ng-template>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Code</th>
+      <th>Owner</th>
+      <th>Name</th>
+      <th>Note</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-coupon>
+    <tr [pSelectableRow]="coupon">
+      <td>{{ coupon.code }}</td>
+      <td>{{ coupon.owner }}</td>
+      <td>{{ coupon.name }}</td>
+      <td>{{ coupon.note }}</td>
+    </tr>
+  </ng-template>
+</p-table>
