@@ -56,9 +56,8 @@ async function callChainCode(isReadOnly, ...args) {
       return response.toString();
     }
   } catch (error) {
-    console.log(`Error processing transaction. ${error}`);
-    console.log(error.stack);
-    return "";
+    console.log(`Error processing transaction. ${error.stack}`);
+    throw error;
   } finally {
     // Disconnect from the gateway
     console.log("Disconnect from Fabric gateway.");

@@ -12,6 +12,8 @@
   "author": "john.xu",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
     "fabric-network": "^1.4.0"
   }
 }

@@ -16,7 +16,7 @@ const certPath = path.join(
 const keyPath = path.join(
   credPath,
   // TO modify accordingly
-  "/msp/keystore/89a6b1a7d54f676b99f27c3ad228b5acf59c76ebf43aa0484d2623dc6efbd4b4_sk"
+  "/msp/keystore/d6b8cba2f7943c5d4d95c6ff8f7bdda733a702c85f9f21149e64a866ae8aea54_sk"
 );
 
 // wallet path, TO modify accordingly
