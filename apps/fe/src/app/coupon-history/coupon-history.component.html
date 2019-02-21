@@ -1,0 +1,24 @@
+<p-table
+  [value]="transactions"
+  [paginator]="true"
+  [rows]="10"
+  selectionMode="single"
+  dataKey="TxId"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>TxId</th>
+      <th>Value</th>
+      <th>Timestamp</th>
+      <th>IsDelete</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-tx>
+    <tr>
+      <td>{{ tx.TxId | slice: 0:16 }}</td>
+      <td>{{ tx.Value | json }}</td>
+      <td>{{ tx.Timestamp }}</td>
+      <td>{{ tx.IsDelete }}</td>
+    </tr>
+  </ng-template>
+</p-table>

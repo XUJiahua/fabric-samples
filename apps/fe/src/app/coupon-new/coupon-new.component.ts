@@ -22,6 +22,7 @@ export class CouponNewComponent implements OnInit {
     console.log(this.coupon);
     this.couponService.addCoupon(this.coupon).subscribe(data => {
       console.log(data);
+      this.goBack();
     });
   }
   goBack(): void {

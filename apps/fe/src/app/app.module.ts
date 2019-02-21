@@ -14,6 +14,7 @@ import { ButtonModule } from 'primeng/button';
 import { CouponNewComponent } from './coupon-new/coupon-new.component';
 import { DialogModule } from 'primeng/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CouponHistoryComponent } from './coupon-history/coupon-history.component';
 
 @NgModule({
   imports: [
@@ -33,7 +34,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MessagesComponent,
     CouponsComponent,
     CouponDetailComponent,
-    CouponNewComponent
+    CouponNewComponent,
+    CouponHistoryComponent
   ],
   bootstrap: [AppComponent]
 })

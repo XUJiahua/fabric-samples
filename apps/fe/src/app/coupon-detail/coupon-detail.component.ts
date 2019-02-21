@@ -4,6 +4,7 @@ import { Coupon } from '../coupon';
 import { ActivatedRoute } from '@angular/router';
 import { CouponService } from '../coupon.service';
 
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-coupon-detail',
   templateUrl: './coupon-detail.component.html',
@@ -12,6 +13,7 @@ import { CouponService } from '../coupon.service';
 export class CouponDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private couponService: CouponService,
     private location: Location
   ) {}
@@ -67,5 +69,9 @@ export class CouponDetailComponent implements OnInit {
   showTransferDialog() {
     this.display2 = true;
     // this.user = ""
+  }
+
+  onHistory() {
+    this.router.navigate(['/history/' + this.coupon.code]);
   }
 }
