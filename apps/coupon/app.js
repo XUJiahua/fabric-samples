@@ -22,11 +22,23 @@ app.use(function(err, req, res, next) {
   res.status(500).send(err);
 });
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
+
 const port = 3000;
 
 errHandler = function(err, res) {
   res.status(500).send(err.message);
 };
+
+successJSON = {
+  "message": "success"
+}
 
 // getCouponsByRange | READ
 app.get("/coupons", async function(req, res) {
@@ -50,7 +62,7 @@ app.post("/coupon", async function(req, res) {
   try {
     cp = req.body;
     result = await add(cp.code, cp.owner, cp.name, cp.note);
-    res.send("success");
+    res.json(successJSON)
   } catch (err) {
     errHandler(err, res);
   }
@@ -68,12 +80,12 @@ app.get("/coupon/:code", async function(req, res) {
 });
 
 // transferCoupon
-app.get("/transfer/:code", async function(req, res) {
+app.put("/transfer/:code", async function(req, res) {
   try {
     code = req.params.code;
     newOwner = req.query.user;
     result = await transferCoupon(code, newOwner);
-    res.send("success");
+    res.json(successJSON)
   } catch (err) {
     errHandler(err, res);
   }
@@ -84,7 +96,7 @@ app.delete("/coupon/:code", async function(req, res) {
   try {
     code = req.params.code;
     result = await remove(code);
-    res.send("success");
+    res.json(successJSON)
   } catch (err) {
     errHandler(err, res);
   }
