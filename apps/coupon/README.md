@@ -20,8 +20,17 @@ profile的说明可见：https://hyperledger-fabric.readthedocs.io/en/latest/dev
 
 3、 封装chaincode的操作，比如封装成API，给终端用户使用。
 
+启动后端 node express
 
 ```
 npm install
 npm start
+```
+
+4、启动前端 angular
+
+```
+cd ../fe
+npm install
+ng serve --open
 ```

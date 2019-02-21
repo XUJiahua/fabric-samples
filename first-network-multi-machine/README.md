@@ -19,6 +19,21 @@ Fabric网络，目前申请有3台机器，每台用途如下：
 ![Alt text](img/WX20190212-175559.png)
 
 
+#### 本地开发环境
+
+```
+cd ../first-network-2p1o
+./byfn.sh up
+
+docker exec -it cli bash
+
+./scripts/install_coupon_cc.sh
+peer chaincode list --installed
+peer chaincode list -C mychannel --instantiated
+```
+
+apps/coupon下是基于node SDK的应用。
+
 ### 部署流程
 
 #### orderer.example.com
