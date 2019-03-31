@@ -13,7 +13,7 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class CouponService {
-  couponUrl = 'http://localhost:3000';
+  couponUrl = 'http://localhost:4200/api';
 
   constructor(
     private messageService: MessageService,
